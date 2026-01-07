@@ -9,6 +9,10 @@ include_once(path(DIR_INCLUDE).'Clases/Formulario/Formulario.class.php');
 require_once (path(DIR_INCLUDE).'Clases/xajax/xajax_core/xajax.inc.php');
 
 require_once (path(DIR_INCLUDE).'Clases/GeneraDetalleAsientoContable.class.php');
+if (!isset($GLOBALS['array'])) {
+    $GLOBALS['array'] = array();
+}
+$array = $GLOBALS['array'];
 require_once (path(DIR_INCLUDE).'Clases/GeneraDetalleInventario.class.php');
 
 include_once(path(DIR_INCLUDE).'comun.lib.rd.php');
@@ -34,6 +38,7 @@ $xajax->registerFunction("genera_documento");
 $xajax->registerFunction("genera_formulario_modifica_detalle");
 $xajax->registerFunction("verDiarioContable");
 $xajax->registerFunction("genera_pdf_doc_compras");
+$xajax->registerFunction("genera_pdf_doc_mov");
 $xajax->registerFunction("enviar_etiquetas");
 $xajax->registerFunction("formulario_etiqueta");
 

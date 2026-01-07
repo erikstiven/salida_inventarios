@@ -237,6 +237,20 @@
             window.open(pagina, "", opciones);
         }
 
+        function generar_pdf_salida() {
+            var opciones = "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=730, height=.370, top=255, left=130";
+            var pagina = '../../Include/documento_pdf3.php?sesionId=<?= session_id() ?>';
+            window.open(pagina, "", opciones);
+        }
+
+        function vista_previa_salida(id, empr, sucu, tran) {
+            if (!id || !empr || !sucu || !tran) {
+                alert('No se pudo generar el reporte: faltan datos del movimiento.');
+                return;
+            }
+            xajax_genera_pdf_doc_mov(empr, sucu, id, tran);
+        }
+
         function genera_etiquetas(id){
             $("#ModalEtiquetas").modal("show");
             xajax_formulario_etiqueta(id, xajax.getFormValues("form1"));

@@ -6,6 +6,11 @@ require("_Ajax.comun.php"); // No modificar esta linea
   :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 ini_set('memory_limit', '1024M');
 
+if (!isset($GLOBALS['array'])) {
+    $GLOBALS['array'] = array();
+}
+$array = $GLOBALS['array'];
+
 /* * ******************************************* */
 /* FCA01 :: GENERA INGRESO TABLA PRESUPUESTO  */
 /* * ******************************************* */
@@ -992,6 +997,10 @@ function consultar($aForm = '', $op = '')
                 $sHtml .= '<td align="right">
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
 										style="cursor: hand !important; cursor: pointer !important;"
+										onclick="javascript:vista_previa_salida( ' . $minv_cod . ', ' . $empresa . ',  ' . $sucursal . ', ' . $minv_cod_tran . ' );"
+										alt="Imprimir" />
+								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
+										style="cursor: hand !important; cursor: pointer !important;"
 										onclick="javascript:vista_previa_( ' . $minv_cod . ', ' . $empresa . ',  ' . $sucursal . ' );"
 										alt="Imprimir" />
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
@@ -1425,6 +1434,78 @@ function genera_pdf_doc_compras($idempresa, $idsucursal, $asto_cod, $ejer_cod, $
     $_SESSION['pdf'] = $diario;
 
     $oReturn->script('generar_pdf_compras()');
+    return $oReturn;
+}
+
+function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    global $DSN_Ifx;
+
+    $oIfxA = new Dbo();
+    $oIfxA->DSN = $DSN_Ifx;
+    $oIfxA->Conectar();
+
+    $oIfx = new Dbo;
+    $oIfx->DSN = $DSN_Ifx;
+    $oIfx->Conectar();
+    unset($_SESSION['pdf']);
+    $oReturn = new xajaxResponse();
+
+    if (empty($idempresa) || empty($idsucursal) || empty($minv_cod) || empty($tran_cod)) {
+        $oReturn->alert('No se pudo generar el reporte: faltan datos del movimiento.');
+        return $oReturn;
+    }
+
+    if (!function_exists('generar_mov_inv_pdf')) {
+        $oReturn->alert('No se pudo generar el reporte: función de formato Salida no disponible.');
+        return $oReturn;
+    }
+
+    try {
+        $sql_moneda_mov = "select minv_cod_mone from saeminv where minv_cod_empr = $idempresa and minv_cod_sucu = $idsucursal and minv_num_comp = $minv_cod";
+        $moneda = consulta_string_func($sql_moneda_mov, 'minv_cod_mone', $oIfx, '');
+        if (empty($moneda)) {
+            $sql_moneda = "select pcon_mon_base from saepcon where pcon_cod_empr = $idempresa ";
+            $moneda = consulta_string_func($sql_moneda, 'pcon_mon_base', $oIfx, '');
+        }
+        if (empty($moneda)) {
+            $oReturn->alert('No se pudo generar el reporte: la moneda base no está configurada.');
+            return $oReturn;
+        }
+
+        $aForm = array(
+            'empresa' => $idempresa,
+            'sucursal' => $idsucursal,
+            'tran' => $tran_cod,
+            'serial' => $minv_cod,
+            'moneda' => $moneda,
+        );
+        $GLOBALS['aForm'] = $aForm;
+        $_SESSION['aForm'] = $aForm;
+        $array = array();
+        $GLOBALS['array'] = $array;
+        $_SESSION['array'] = $array;
+
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new Exception($message . ' en ' . basename($file) . ':' . $line);
+        });
+        $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
+        restore_error_handler();
+        if (empty($diario)) {
+            $oReturn->alert('No se pudo generar el reporte: el formato Salida no devolvió contenido.');
+            return $oReturn;
+        }
+        $_SESSION['pdf'] = $diario;
+    } catch (Exception $e) {
+        restore_error_handler();
+        $oReturn->alert('Error al generar el reporte: ' . $e->getMessage());
+        return $oReturn;
+    }
+
+    $oReturn->script('generar_pdf_salida()');
     return $oReturn;
 }
 
