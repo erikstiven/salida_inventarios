@@ -1460,6 +1460,23 @@ function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
     }
 
     try {
+        $sql_moneda = "select pcon_mon_base from saepcon where pcon_cod_empr = $idempresa ";
+        $moneda = consulta_string_func($sql_moneda, 'pcon_mon_base', $oIfx, '');
+        if (empty($moneda)) {
+            $oReturn->alert('No se pudo generar el reporte: la moneda base no está configurada.');
+            return $oReturn;
+        }
+
+        $aForm = array(
+            'empresa' => $idempresa,
+            'sucursal' => $idsucursal,
+            'tran' => $tran_cod,
+            'serial' => $minv_cod,
+            'moneda' => $moneda,
+        );
+        $GLOBALS['aForm'] = $aForm;
+        $_SESSION['aForm'] = $aForm;
+
         $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
         $_SESSION['pdf'] = $diario;
     } catch (Exception $e) {
