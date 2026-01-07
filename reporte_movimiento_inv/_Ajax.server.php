@@ -6,6 +6,11 @@ require("_Ajax.comun.php"); // No modificar esta linea
   :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 ini_set('memory_limit', '1024M');
 
+if (!isset($GLOBALS['array'])) {
+    $GLOBALS['array'] = array();
+}
+$array = $GLOBALS['array'];
+
 /* * ******************************************* */
 /* FCA01 :: GENERA INGRESO TABLA PRESUPUESTO  */
 /* * ******************************************* */
