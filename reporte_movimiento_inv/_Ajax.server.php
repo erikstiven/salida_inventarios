@@ -1460,8 +1460,12 @@ function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
     }
 
     try {
-        $sql_moneda = "select pcon_mon_base from saepcon where pcon_cod_empr = $idempresa ";
-        $moneda = consulta_string_func($sql_moneda, 'pcon_mon_base', $oIfx, '');
+        $sql_moneda_mov = "select minv_cod_mone from saeminv where minv_cod_empr = $idempresa and minv_cod_sucu = $idsucursal and minv_num_comp = $minv_cod";
+        $moneda = consulta_string_func($sql_moneda_mov, 'minv_cod_mone', $oIfx, '');
+        if (empty($moneda)) {
+            $sql_moneda = "select pcon_mon_base from saepcon where pcon_cod_empr = $idempresa ";
+            $moneda = consulta_string_func($sql_moneda, 'pcon_mon_base', $oIfx, '');
+        }
         if (empty($moneda)) {
             $oReturn->alert('No se pudo generar el reporte: la moneda base no está configurada.');
             return $oReturn;
@@ -1477,9 +1481,18 @@ function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
         $GLOBALS['aForm'] = $aForm;
         $_SESSION['aForm'] = $aForm;
 
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new Exception($message . ' en ' . basename($file) . ':' . $line);
+        });
         $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
+        restore_error_handler();
+        if (empty($diario)) {
+            $oReturn->alert('No se pudo generar el reporte: el formato Salida no devolvió contenido.');
+            return $oReturn;
+        }
         $_SESSION['pdf'] = $diario;
     } catch (Exception $e) {
+        restore_error_handler();
         $oReturn->alert('Error al generar el reporte: ' . $e->getMessage());
         return $oReturn;
     }
