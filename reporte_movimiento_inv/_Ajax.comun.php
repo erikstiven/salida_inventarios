@@ -9,6 +9,10 @@ include_once(path(DIR_INCLUDE).'Clases/Formulario/Formulario.class.php');
 require_once (path(DIR_INCLUDE).'Clases/xajax/xajax_core/xajax.inc.php');
 
 require_once (path(DIR_INCLUDE).'Clases/GeneraDetalleAsientoContable.class.php');
+if (!isset($GLOBALS['array'])) {
+    $GLOBALS['array'] = array();
+}
+$array = $GLOBALS['array'];
 require_once (path(DIR_INCLUDE).'Clases/GeneraDetalleInventario.class.php');
 
 include_once(path(DIR_INCLUDE).'comun.lib.rd.php');
