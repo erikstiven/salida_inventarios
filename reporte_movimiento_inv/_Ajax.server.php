@@ -1449,8 +1449,23 @@ function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
     unset($_SESSION['pdf']);
     $oReturn = new xajaxResponse();
 
-    $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
-    $_SESSION['pdf'] = $diario;
+    if (empty($idempresa) || empty($idsucursal) || empty($minv_cod) || empty($tran_cod)) {
+        $oReturn->alert('No se pudo generar el reporte: faltan datos del movimiento.');
+        return $oReturn;
+    }
+
+    if (!function_exists('generar_mov_inv_pdf')) {
+        $oReturn->alert('No se pudo generar el reporte: función de formato Salida no disponible.');
+        return $oReturn;
+    }
+
+    try {
+        $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
+        $_SESSION['pdf'] = $diario;
+    } catch (Exception $e) {
+        $oReturn->alert('Error al generar el reporte: ' . $e->getMessage());
+        return $oReturn;
+    }
 
     $oReturn->script('generar_pdf_salida()');
     return $oReturn;

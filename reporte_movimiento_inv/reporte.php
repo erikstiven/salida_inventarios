@@ -244,6 +244,10 @@
         }
 
         function vista_previa_salida(id, empr, sucu, tran) {
+            if (!id || !empr || !sucu || !tran) {
+                alert('No se pudo generar el reporte: faltan datos del movimiento.');
+                return;
+            }
             xajax_genera_pdf_doc_mov(empr, sucu, id, tran);
         }
 
