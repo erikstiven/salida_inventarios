@@ -992,6 +992,10 @@ function consultar($aForm = '', $op = '')
                 $sHtml .= '<td align="right">
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
 										style="cursor: hand !important; cursor: pointer !important;"
+										onclick="javascript:vista_previa_salida( ' . $minv_cod . ', ' . $empresa . ',  ' . $sucursal . ', ' . $minv_cod_tran . ' );"
+										alt="Imprimir" />
+								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
+										style="cursor: hand !important; cursor: pointer !important;"
 										onclick="javascript:vista_previa_( ' . $minv_cod . ', ' . $empresa . ',  ' . $sucursal . ' );"
 										alt="Imprimir" />
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
@@ -1425,6 +1429,30 @@ function genera_pdf_doc_compras($idempresa, $idsucursal, $asto_cod, $ejer_cod, $
     $_SESSION['pdf'] = $diario;
 
     $oReturn->script('generar_pdf_compras()');
+    return $oReturn;
+}
+
+function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+    global $DSN_Ifx;
+
+    $oIfxA = new Dbo();
+    $oIfxA->DSN = $DSN_Ifx;
+    $oIfxA->Conectar();
+
+    $oIfx = new Dbo;
+    $oIfx->DSN = $DSN_Ifx;
+    $oIfx->Conectar();
+    unset($_SESSION['pdf']);
+    $oReturn = new xajaxResponse();
+
+    $diario = generar_mov_inv_pdf($idempresa, $idsucursal, $minv_cod, $tran_cod, 0, 0);
+    $_SESSION['pdf'] = $diario;
+
+    $oReturn->script('generar_pdf_salida()');
     return $oReturn;
 }
 
