@@ -1480,6 +1480,9 @@ function genera_pdf_doc_mov($idempresa, $idsucursal, $minv_cod, $tran_cod)
         );
         $GLOBALS['aForm'] = $aForm;
         $_SESSION['aForm'] = $aForm;
+        $array = array();
+        $GLOBALS['array'] = $array;
+        $_SESSION['array'] = $array;
 
         set_error_handler(function ($severity, $message, $file, $line) {
             throw new Exception($message . ' en ' . basename($file) . ':' . $line);
