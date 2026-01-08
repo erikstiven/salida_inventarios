@@ -201,9 +201,9 @@
             window.open(pagina, "", opciones);
         }
 
-        function vista_previa_salida(id, secu, empr) {
+        function vista_previa_salida(id, secu, empr, sucu) {
             var opciones = "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=730, height=380, top=255, left=130";
-            var pagina = '../inventario_egreso/vista_previa.php?sesionId=<?= session_id() ?>&empresa=' + empr + '&serial=' + id + '&secu=' + secu;
+            var pagina = '../reporte_movimiento_inv/vista_previa_salida.php?sesionId=<?= session_id() ?>&empresa=' + empr + '&serial=' + id + '&secu=' + secu + '&sucu=' + sucu;
             window.open(pagina, "", opciones);
         }
 
