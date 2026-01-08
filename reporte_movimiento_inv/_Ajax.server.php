@@ -992,6 +992,10 @@ function consultar($aForm = '', $op = '')
                 $sHtml .= '<td align="right">
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
 										style="cursor: hand !important; cursor: pointer !important;"
+										onclick="javascript:vista_previa_salida( ' . $minv_cod . ', ' . $minv_secu . ', ' . $empresa . ' );"
+										alt="Imprimir" />
+								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
+										style="cursor: hand !important; cursor: pointer !important;"
 										onclick="javascript:vista_previa_( ' . $minv_cod . ', ' . $empresa . ',  ' . $sucursal . ' );"
 										alt="Imprimir" />
 								<img src="' . $_COOKIE['JIREH_IMAGENES'] . 'iconos/print.png"
